@@ -1,0 +1,3 @@
+'use client';
+import { X } from 'lucide-react';
+export function Modal({open,onClose,title,children}:{open:boolean;onClose:()=>void;title:string;children:React.ReactNode}){if(!open)return null;return <div role="dialog" aria-modal="true" className="fixed inset-0 z-[70] flex items-center justify-center bg-black/45 p-4" onMouseDown={onClose}><div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white shadow-2xl" onMouseDown={e=>e.stopPropagation()}><div className="flex items-center justify-between border-b border-stone-200 px-5 py-4"><h2 className="text-lg font-bold">{title}</h2><button aria-label="Close" onClick={onClose} className="rounded p-1 hover:bg-stone-100"><X size={20}/></button></div><div className="p-5">{children}</div></div></div>}

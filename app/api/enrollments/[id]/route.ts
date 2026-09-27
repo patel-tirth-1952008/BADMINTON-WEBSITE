@@ -1,0 +1,6 @@
+import { NextRequest } from 'next/server';
+import { adminDb, badRequest, json, parseBody, requireAdmin } from '@/lib/api';
+import { z } from 'zod';
+const updateSchema = z.object({ status: z.enum(['pending','approved','rejected','active','completed','dropped']).optional(), start_date: z.string().date().nullable().optional(), notes: z.string().max(2000).nullable().optional() });
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) { try { const auth = await requireAdmin(request); if (auth.failure) return auth.failure; const input = updateSchema.parse(await parseBody(request)); const { data, error } = await adminDb().from('enrollments').update(input).eq('id', params.id).select('*,programs(*)').single(); if (error) throw error; return json({ enrollment: data }); } catch (error) { return badRequest(error instanceof Error ? error.message : 'Unable to update enrollment.'); } }
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) { try { const auth = await requireAdmin(request); if (auth.failure) return auth.failure; const { error } = await adminDb().from('enrollments').delete().eq('id', params.id); if (error) throw error; return json({ success: true }); } catch (error) { return json({ error: error instanceof Error ? error.message : 'Unable to delete enrollment.' }, { status: 500 }); } }

@@ -1,0 +1,2 @@
+import { json, adminDb } from '@/lib/api';
+export async function GET(){try{const{data,error}=await adminDb().from('testimonials').select('*').eq('is_approved',true).order('is_featured',{ascending:false}).order('created_at',{ascending:false});if(error)throw error;return json({testimonials:data||[]});}catch(error){return json({error:error instanceof Error?error.message:'Unable to load testimonials.'},{status:500});}}

@@ -1,0 +1,3 @@
+import { Program } from '@/lib/types/database';
+import { money } from '@/lib/utils/helpers';
+export function PricingTable({program}:{program:Program}){return <div className="overflow-hidden rounded-lg border border-stone-200"><table className="w-full text-sm"><thead className="bg-stone-50"><tr><th className="p-3 text-left">Plan</th><th className="p-3 text-right">Price</th></tr></thead><tbody>{[['Monthly',program.price_monthly],['Quarterly',program.price_quarterly],['Yearly',program.price_yearly]].map(([plan,price])=><tr key={String(plan)} className="border-t border-stone-100"><td className="p-3">{plan}</td><td className="p-3 text-right font-bold">{money(Number(price))}</td></tr>)}</tbody></table></div>}

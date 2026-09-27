@@ -1,0 +1,2 @@
+import { clsx } from 'clsx';
+export function Badge({children,tone='amber'}:{children:React.ReactNode;tone?:'amber'|'success'|'danger'|'neutral'}){return <span className={clsx('inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold',{'bg-brand-light text-amber-800':'amber'===tone,'bg-green-100 text-green-800':'success'===tone,'bg-red-100 text-red-700':'danger'===tone,'bg-stone-100 text-stone-700':'neutral'===tone})}>{children}</span>}

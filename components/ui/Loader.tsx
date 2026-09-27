@@ -1,0 +1,2 @@
+export function Loader({label='Loading'}:{label?:string}){return <div className="flex min-h-[180px] items-center justify-center gap-3 text-muted"><span className="h-6 w-6 animate-spin rounded-full border-2 border-stone-300 border-t-brand"/><span>{label}…</span></div>}
+export function TableSkeleton(){return <div className="space-y-3 p-5">{Array.from({length:6}).map((_,i)=><div key={i} className="skeleton h-10 w-full"/>)}</div>}

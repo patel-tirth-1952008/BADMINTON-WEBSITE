@@ -1,0 +1,6 @@
+'use client';
+import Link from 'next/link';
+import { X } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+const links=[['Home','/'],['Book a Court','/book'],['Programs','/programs'],['Coaches','/coaches'],['Facilities','/facilities'],['Gallery','/gallery'],['Contact','/contact']];
+export function MobileMenu({open,onClose,isLoggedIn}:{open:boolean;onClose:()=>void;isLoggedIn:boolean}){if(!open)return null;return <div className="fixed inset-0 z-50 bg-white p-5 md:hidden"><div className="mb-10 flex items-center justify-between"><strong className="text-xl">Rally<span className="text-amber-700">Point</span></strong><button onClick={onClose} aria-label="Close navigation" className="rounded p-2 hover:bg-stone-100"><X/></button></div><nav className="flex flex-col gap-2">{links.map(([label,href])=><Link onClick={onClose} className="rounded-lg px-3 py-3 text-lg font-semibold hover:bg-brand-light" href={href} key={href}>{label}</Link>)}</nav><div className="mt-8 grid grid-cols-2 gap-3"><Link onClick={onClose} href={isLoggedIn?'/progress':'/login'}><Button variant="outline" className="w-full">{isLoggedIn?'My Progress':'Login'}</Button></Link><Link onClick={onClose} href="/book"><Button className="w-full">Book Now</Button></Link></div></div>}

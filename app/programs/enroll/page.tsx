@@ -1,0 +1,17 @@
+'use client';
+import Link from 'next/link';
+import { Suspense } from 'react';
+import { useEffect,useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { CheckCircle2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { SiteShell } from '@/components/layout/SiteShell';
+import { EnrollmentForm } from '@/components/programs/EnrollmentForm';
+import { PricingTable } from '@/components/programs/PricingTable';
+import { Card } from '@/components/ui/Card';
+import { Loader } from '@/components/ui/Loader';
+import { Button } from '@/components/ui/Button';
+import { api } from '@/lib/utils/helpers';
+import { Program } from '@/lib/types/database';
+function EnrollContent(){const params=useSearchParams();const id=params.get('program');const[program,setProgram]=useState<Program|null>(null);const[loading,setLoading]=useState(true);const[submitting,setSubmitting]=useState(false);const[done,setDone]=useState(false);useEffect(()=>{if(!id){setLoading(false);return;}api<{program:Program}>(`/api/programs/${id}`).then(x=>setProgram(x.program)).catch(e=>toast.error(e.message)).finally(()=>setLoading(false));},[id]);const submit=async(data:unknown)=>{setSubmitting(true);try{await api('/api/enrollments',{method:'POST',body:JSON.stringify(data)});setDone(true);toast.success('Enrollment submitted.');}catch(error){toast.error(error instanceof Error?error.message:'Unable to submit enrollment.');}finally{setSubmitting(false);}};return <SiteShell><div className="container-page section">{loading?<Loader/>:!program?<Card className="mx-auto max-w-lg p-8 text-center"><h1 className="text-2xl font-extrabold">Choose a program first</h1><p className="mt-2 text-muted">The selected program could not be found.</p><Link href="/programs" className="mt-5 inline-block"><Button>View programs</Button></Link></Card>:done?<Card className="mx-auto max-w-lg p-8 text-center"><CheckCircle2 className="mx-auto text-success" size={56}/><h1 className="mt-4 text-2xl font-extrabold">Application received</h1><p className="mt-2 text-muted">Our team will review your {program.name} enrollment and contact you shortly.</p><Link href="/programs" className="mt-5 inline-block"><Button>Back to programs</Button></Link></Card>:<div className="grid items-start gap-7 lg:grid-cols-[.8fr_1.2fr]"><Card className="p-6"><p className="text-sm font-bold uppercase tracking-[.14em] text-amber-700">Selected program</p><h1 className="mt-2 text-3xl font-extrabold">{program.name}</h1><p className="mt-3 leading-7 text-muted">{program.description}</p><div className="mt-5 space-y-2 text-sm"><p><strong>Age group:</strong> {program.age_group}</p><p><strong>Batch:</strong> {program.batch_time}</p><p><strong>Days:</strong> {program.batch_days}</p><p><strong>Coach:</strong> {program.coaches?.name||'Assigned by academy'}</p></div><h2 className="mt-6 font-extrabold">Live pricing</h2><div className="mt-3"><PricingTable program={program}/></div></Card><Card className="p-6"><p className="text-sm font-bold uppercase tracking-[.14em] text-amber-700">Enrollment</p><h2 className="mt-2 text-2xl font-extrabold">Tell us about the student</h2><p className="mt-2 text-sm text-muted">Applications are reviewed by the academy before activation.</p><div className="mt-6"><EnrollmentForm program={program} onSubmit={submit} submitting={submitting}/></div></Card></div>}</div></SiteShell>}
+export default function EnrollPage(){return <Suspense fallback={<div className="grid min-h-screen place-items-center text-muted">Loading enrollment…</div>}><EnrollContent/></Suspense>}

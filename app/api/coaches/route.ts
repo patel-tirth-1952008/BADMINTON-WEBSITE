@@ -1,0 +1,5 @@
+import { NextRequest } from 'next/server';
+import { adminDb, badRequest, json, parseBody, requireAdmin } from '@/lib/api';
+import { coachSchema } from '@/lib/utils/validators';
+export async function GET(request:NextRequest){try{const all=request.nextUrl.searchParams.get('all')==='1';if(all){const auth=await requireAdmin(request);if(auth.failure)return auth.failure;}let query=adminDb().from('coaches').select('*').order('name');if(!all)query=query.eq('is_active',true);const{data,error}=await query;if(error)throw error;return json({coaches:data||[]});}catch(error){return json({error:error instanceof Error?error.message:'Unable to load coaches.'},{status:500});}}
+export async function POST(request:NextRequest){try{const auth=await requireAdmin(request);if(auth.failure)return auth.failure;const input=coachSchema.parse(await parseBody(request));const{data,error}=await adminDb().from('coaches').insert({...input,avatar_url:input.avatar_url||null}).select().single();if(error)throw error;return json({coach:data},{status:201});}catch(error){return badRequest(error instanceof Error?error.message:'Unable to add coach.');}}
